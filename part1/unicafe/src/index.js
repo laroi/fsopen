@@ -8,7 +8,7 @@ const Button = (props) => (
 )
 const Statistic = (props) => {
     return (
-    <p>{props.label} : {props.value}</p>
+    <tr><td>{props.label}</td><td>{props.value}</td></tr>
     )
 }
 const Stats = (props) =>{ 
@@ -19,12 +19,16 @@ const Stats = (props) =>{
     return (
     <div>
         <h1>Statistics</h1>
+        <table>
+        <tbody>
         <Statistic label={"good"} value={props.good}/>
         <Statistic label={"neutral"} value={props.neutral}/>
         <Statistic label={"bad"} value={props.bad}/>
         <Statistic label={"all"} value={all}/>
         <Statistic label={"average"} value={((props.good+(props.bad*-1))/(props.good+props.bad) || 0)}/>
         <Statistic label={"positive"} value={`${((props.good/all) * 100) || 0} %`}/>
+        </tbody>
+        </table>
     </div>
 )
 }
