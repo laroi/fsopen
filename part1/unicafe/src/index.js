@@ -7,7 +7,10 @@ const Button = (props) => (
   </button>
 )
 const Stats = (props) =>{ 
-     const all = props.good+props.bad+props.neutral
+    const all = props.good+props.bad+props.neutral
+    if (all <= 0) {
+        return (<div> <h1>Statistics</h1><p>No feedback given</p></div>)
+    }
     return (
     <div>
         <h1>Statistics</h1>
