@@ -11,23 +11,22 @@ const More = () => {
 const List = (props) => {
 	return (
 		<div>
-			{props.cont.map(x=><div key={x.alpha2Code}>{x.name}</div>)}
+			{props.cont.map(x=><div key={x.alpha2Code}>{x.name} <button onClick={props.show(x)}>show</button></div>)}
 		</div>
 	)
 }
 
-const Detail = (prop) => {
-
+const Detail = (props) => {
 	return(
 		<div>
-			<h2>{prop.name}</h2>
-			<p>capital {prop.capital}</p>
-			<p>population {prop.population}</p>
+			<h2>{props.name}</h2>
+			<p>capital {props.capital}</p>
+			<p>population {props.population}</p>
 			<h3>languages</h3>
 			<ul>
-			{prop.languages.map(x=><li key={x.iso639_1}>{x.name}</li>)}
+			{props.languages.map(x=><li key={x.iso639_1}>{x.name}</li>)}
 			</ul>
-			<img height="150" width="150" src={prop.flag}/>
+			<img height="150" width="150" src={props.flag}/>
 		</div>
 	)
 
@@ -36,6 +35,7 @@ function App() {
 
     const [countries, setCountries] = useState([]);
     const [search, setSearch] = useState('');
+    const [selectedCont, setSelectedCont] = useState('');
 
 	   useEffect(() => {
 		  axios
@@ -45,6 +45,11 @@ function App() {
 			})
 		}, [])
 	const conts = search ? countries.filter(x=>x.name.toLowerCase().includes(search.toLowerCase())) : countries;
+    const show = (cont) => {
+        return () => {
+           setSelectedCont(cont)
+        }
+    }
 	let el;
 	if (conts.length > 5) {
 		el = <More/>
@@ -53,13 +58,18 @@ function App() {
 		el = <Detail {...conts[0]}/>
 	}
 	else {
-		el = <List cont={conts}/>
+		el = <List show={show} cont={conts}/>
 	}
+    const det = (selectedCont && conts.length>1 && conts.length <6) ? <Detail {...selectedCont}/> : null
   return (
     <div className="App">
-        find countries <input autoFocus value={search} onChange={(e)=> {setSearch(e.target.value);}}/>
+        find countries <input autoFocus value={search} onChange={(e)=> {setSearch(e.target.value); setSelectedCont('')}}/>
 		{el}
+        <div>
+        {det}
+        </div>
     </div>
+
   );
 }
 
