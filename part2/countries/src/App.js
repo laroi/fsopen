@@ -8,6 +8,22 @@ const More = () => {
 	)
 }
 
+const Weather = (props) => {
+    if (Object.keys(props).length > 0) {
+        const {current = {}, location = {}} = props;
+        const [icon = null] = current.weather_icons;
+        const {weather_descriptions = {}} = current;
+        return (
+            <div>
+                <h3>Weather in {location.country}</h3>
+                <p>temperature: {current.temperature}</p>
+                <img src={icon}/>
+                <p>wind: {weather_descriptions.wind_speed} direction {weather_descriptions.wind_dir} </p>
+            </div>
+        )
+    }
+    return null;
+}
 const List = (props) => {
 	return (
 		<div>
@@ -17,6 +33,15 @@ const List = (props) => {
 }
 
 const Detail = (props) => {
+    console.log(props);
+    const [weather, setWeather] = useState({});
+    const hook = () => {
+        console.log('Hook')
+        axios
+        .get(`http://api.weatherstack.com/current?access_key=812550e976d1726d73cbc5fcc6b207eb&query=${props.name}`)
+        .then((res)=> {setWeather(res.data)})
+    }
+    useEffect(hook);
 	return(
 		<div>
 			<h2>{props.name}</h2>
@@ -27,6 +52,7 @@ const Detail = (props) => {
 			{props.languages.map(x=><li key={x.iso639_1}>{x.name}</li>)}
 			</ul>
 			<img height="150" width="150" src={props.flag}/>
+            <Weather {...weather} />
 		</div>
 	)
 
