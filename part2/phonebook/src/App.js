@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios';
+import {get, post} from './services';
 const App = () => {
   const [ persons, setPersons] = useState([
 
@@ -13,16 +13,21 @@ const App = () => {
         e.preventDefault();
         return false;
       }
-      setPersons([...persons, {name:newName, number:newNumber}]);
-      setNewName('');
-      setNewNumber('');
+      const newObj = {id: persons.length+1, name:newName, number:newNumber}
+      post(`http://localhost:3001/persons`, newObj )
+      .then(()=> {
+          setPersons([...persons, {name:newName, number:newNumber}]);
+          setNewName('');
+          setNewNumber('');
+      })
+      
       e.preventDefault();
   }
 
   const Filter = (props) => {
       return (
         <div>
-          Filter shown with: <input autofocus value={filter} onChange={(e)=> {setFilter(e.target.value);}}/>
+          Filter shown with: <input value={filter} onChange={(e)=> {setFilter(e.target.value);}}/>
         </div>
       )
   };
@@ -51,16 +56,12 @@ const App = () => {
         src = persons.filter(x=>x.name.toLowerCase().includes(filter.toLowerCase()))
       }
       return (
-          <div>{src.map(x=>(<h3>{x.name} {x.number}</h3>))}</div>
+          <div>{src.map(x=>(<h3 key={x.id}>{x.name} {x.number}</h3>))}</div>
       )
   };
   useEffect(()=> {
-    axios
-       .get('http://localhost:3001/persons')
-      .then(response => {
-          console.log(response);
-          setPersons(response.data)
-      });
+      get('http://localhost:3001/persons')
+      .then(data=>setPersons(data))
   }, [])
   return (
     <div>
